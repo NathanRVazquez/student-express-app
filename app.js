@@ -119,8 +119,7 @@ app.get('/students/:id', async (req, res) => {
   console.log(id);
 
   const student = await prisma.student.findUnique({
-    where:{sId:id},git remote add origin <Repository_Location>
-
+    where:{sId:id},
   });
   // let students = await prisma.student.findMany();
   // // find student with matching ID and respond with the student
