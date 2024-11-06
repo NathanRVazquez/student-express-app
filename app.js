@@ -7,7 +7,7 @@ const app = express()
 app.use(bodyparser.json());
 //give express teh functions it needs to support incoming and outgoing json
 app.use(cors());
-const port = 3000
+const port = process.env || 3000;//use given port or default to 3000 if none is given
 let students = [
     {
       "firstName": "Aryan",
