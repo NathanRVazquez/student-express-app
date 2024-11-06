@@ -1,0 +1,2 @@
+npm remove
+rm -rf ./**/node_modules

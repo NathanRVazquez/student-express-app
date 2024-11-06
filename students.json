@@ -1,0 +1,58 @@
+[
+    {
+      "firstName": "Aryan",
+      "lastName": "Jabbari",
+      "sId": "234",
+      "school": "Queens College",
+      "major": "Computer Science"
+    },
+    {
+      "firstName": "Lidia",
+      "lastName": "De La Cruz",
+      "sId": "333",
+      "school": "Harvard",
+      "major": "Philanthrophy"
+    },
+    {
+      "firstName": "Brian",
+      "lastName": "De Los Santos",
+      "sId": "468",
+      "school": "John Jay",
+      "major": "Computer Science"
+    },
+    {
+      "firstName": "Adam",
+      "lastName": "Albaghali",
+      "sId": "589",
+      "school": "Brooklyn College",
+      "major": "Computer Science"
+    },
+    {
+      "firstName": "Nathan",
+      "lastName": "Vazquez",
+      "sId": "559",
+      "school": "Hunter College",
+      "major": "Computer Science"
+    },
+    {
+      "firstName": "Ynalois",
+      "lastName": "Pangilinan",
+      "sId": "560",
+      "school": "Hunter College",
+      "major": "Computer Science"
+    },
+    {
+      "firstName": "Shohruz",
+      "lastName": "Ernazarov",
+      "sId": "561",
+      "school": "Hunter College",
+      "major": "Computer Science"
+    },
+    {
+      "firstName": "Kevin",
+      "lastName": "Orta",
+      "sId": "562",
+      "school": "John Jay",
+      "major": "Computer Science"
+    }
+  ]

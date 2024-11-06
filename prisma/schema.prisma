@@ -1,0 +1,40 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+
+}
+
+model Student{
+  sId  String @id @default(uuid())
+  major String
+  firstName String
+  lastName String
+  school String
+  grade GradeEnum
+  
+}
+
+enum GradeEnum{
+  FRESHMAN
+  SOPHMORE
+  JUNIOR
+  SENIOR
+}
+
+// when the code on our laptop and on prisma gets out of sync, prisma will figure out what is different between the DB and our local code and will adjust
+// the database
+
+// Thedev flag is telling prisma that our DB is a dev build and can be mutated in any way it needs to resolve the issues
+
+//how can I specify a null value 
