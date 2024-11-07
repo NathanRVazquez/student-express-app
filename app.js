@@ -137,7 +137,7 @@ app.post('/students', async (req, res) => {
   console.log(req.body);
   // normally we validate req.body but skipping due to time
 
-  const Prismastudents = await prisma.student.create({ data: req.body });
+  const Prismastudents = await prisma.student.create({ data: {... req.body,grade:"FRESHMAN"} });
   res.json(Prismastudents);
 });
 
