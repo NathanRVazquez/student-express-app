@@ -4,6 +4,9 @@ const {PrismaClient} = require('@prisma/client'); //added this
 const prisma = new PrismaClient();
 const cors = require('cors')
 const app = express()
+
+const{clerkClient} = require('./lib/clerk.js');
+
 app.use(bodyparser.json());
 //give express teh functions it needs to support incoming and outgoing json
 app.use(cors());
@@ -132,6 +135,22 @@ app.get('/students/:id', async (req, res) => {
   }
 });
 
+app.post('/login', async (req, res) => {
+  const { emailAddress, password } = req.body;
+  const dbUser = await prisma.users.findUnique({ where: { email: emailAddress.toLowerCase() } });
+  if (!dbUser) {
+    res.status(401).json({ message: 'error logging in' });
+  }
+  const { verified } = await clerkClient.users.verifyPassword({ userId: dbUser.authId, password });
+  if (!verified) {
+    res.status(401).json({ message: 'error logging in' });
+  }
+
+  const signInToken = await clerkClient.signInTokens.createSignInToken({ userId: dbUser.authId });
+  res.cookie('accessToken', signInToken.token);
+  res.json(signInToken);
+});
+
 
 app.post('/students', async (req, res) => {
   console.log(req.body);
@@ -140,6 +159,19 @@ app.post('/students', async (req, res) => {
   const Prismastudents = await prisma.student.create({ data: {... req.body,grade:"FRESHMAN"} });
   res.json(Prismastudents);
 });
+
+app.post('/register', async (req, res) => {
+  
+  const { emailAddress, password } = req.body;
+  console.log(req.body);
+  const user = await clerkClient.users.createUser({ emailAddress: [emailAddress], password });
+  await prisma.users.create({ data: { authId: user.id, email: emailAddress.toLowerCase() } });
+
+  const signInToken = await clerkClient.signInTokens.createSignInToken({ userId: user.id });
+  res.cookie('accessToken', signInToken.token);
+  res.json(signInToken);
+});
+
 
 
 app.listen(port, () => {
