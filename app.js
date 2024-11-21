@@ -1,94 +1,67 @@
 const express = require('express')
 const bodyparser= require('body-parser')
+
 const {PrismaClient} = require('@prisma/client'); //added this
 const prisma = new PrismaClient();
+
 const cors = require('cors')
 const app = express()
 
+const cookieParser = require('cookie-parser');
+app.use(cookieParser()); // parse cookies
 const{clerkClient} = require('./lib/clerk.js');
+const { clerkMiddleware, getAuth } = require('@clerk/express');
+
+app.use(clerkMiddleware()); // https://clerk.com/docs/references/express/overview
 
 app.use(bodyparser.json());
 //give express teh functions it needs to support incoming and outgoing json
 app.use(cors());
 const port = process.env.PORT || 3000;//use given port or default to 3000 if none is given
-let students = [
-    {
-      "firstName": "Aryan",
-      "lastName": "Jabbari",
-      "sId": "234",
-      "school": "Queens College",
-      "major": "Computer Science"
-    },
-    {
-      "firstName": "Lidia",
-      "lastName": "De La Cruz",
-      "sId": "333",
-      "school": "Harvard",
-      "major": "Philanthrophy"
-    },
-    {
-      "firstName": "Brian",
-      "lastName": "De Los Santos",
-      "sId": "468",
-      "school": "John Jay",
-      "major": "Computer Science"
-    },
-    {
-      "firstName": "Adam",
-      "lastName": "Albaghali",
-      "sId": "589",
-      "school": "Brooklyn College",
-      "major": "Computer Science"
-    },
-    {
-      "firstName": "Nathan",
-      "lastName": "Vazquez",
-      "sId": "559",
-      "school": "Hunter College",
-      "major": "Computer Science"
-    },
-    {
-      "firstName": "Ynalois",
-      "lastName": "Pangilinan",
-      "sId": "560",
-      "school": "Hunter College",
-      "major": "Computer Science"
-    },
-    {
-      "firstName": "Shohruz",
-      "lastName": "Ernazarov",
-      "sId": "561",
-      "school": "Hunter College",
-      "major": "Computer Science"
-    },
-    {
-      "firstName": "Kevin",
-      "lastName": "Orta",
-      "sId": "562",
-      "school": "John Jay",
-      "major": "Computer Science"
-    }
-  ]
+
 app.get('/hello', (req, res) => {      
 
   res.json(students)
 //   res.json({'message':'hello!'});
 })
 
+// app.get('/students', async (req, res) => {
+//   // console.log(req.query.school);
+
+//   // instead of only school, generically filter by any property name
+//   if (req.query) {
+//     const propertyNames = Object.keys(req.query);
+//     let Prismastudents = await prisma.student.findMany();
+//     for (const propertyName of propertyNames) {
+//       Prismastudents = Prismastudents.filter((s) => s[propertyName] === req.query[propertyName]);
+//     }
+//     res.json(Prismastudents);
+//   } else {
+//     // else, respond with the entire list
+//     res.json(Prismastudents);
+//   }
+// });
+
 app.get('/students', async (req, res) => {
-  // console.log(req.query.school);
+  const auth = getAuth(req);
+  console.log(auth);
+  if (!auth.userId) {
+
+    return res.status(401).json([]);
+
+  }
 
   // instead of only school, generically filter by any property name
   if (req.query) {
     const propertyNames = Object.keys(req.query);
-    let Prismastudents = await prisma.student.findMany();
+    let students = await prisma.student.findMany();
     for (const propertyName of propertyNames) {
-      Prismastudents = Prismastudents.filter((s) => s[propertyName] === req.query[propertyName]);
+      students = students.filter((s) => s[propertyName] === req.query[propertyName]);
     }
-    res.json(Prismastudents);
+    res.json(students);
   } else {
     // else, respond with the entire list
-    res.json(Prismastudents);
+    res.json(studentList);
   }
 });
 
@@ -171,8 +144,6 @@ app.post('/register', async (req, res) => {
   res.cookie('accessToken', signInToken.token);
   res.json(signInToken);
 });
-
-
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`)
